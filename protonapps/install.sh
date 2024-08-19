@@ -11,7 +11,7 @@ JQ_PARSE_SHA512=".File[] | select(.Identifier | contains(\".deb\")) | .Sha512Che
 sudo apt-get update
 sudo apt-get -y install --no-install-recommends jq libasound2-plugins
 
-## Download proton mail
+## Install proton mail
 PROTON_MAIL_VERSION_FILE="https://proton.me/download/mail/linux/version.json"
 PROTON_MAIL_RELEASE_LATEST=$(curl -s "${PROTON_MAIL_VERSION_FILE}" | jq -r "${JQ_PARSE_RELEASE}")
 PROTON_MAIL_PACKAGE_URL=$(echo "${PROTON_MAIL_RELEASE_LATEST}" | jq -r "${JQ_PARSE_PACKAGE}")
