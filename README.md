@@ -21,4 +21,5 @@ The following distroboxes manifestos are available:
 
 | Manifest                                  | Description                                           | Install                                                       |
 | ----------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------- |
+| [Abacus](./abacus/distrobox.ini)          | [Abacus](https://www.abacus.ch/) applications         | `distrobox assemble create --file ./abacus/distrobox.ini`     |
 | [Proton Apps](./protonapps/distrobox.ini) | A selection of [Proton Apps](https://protonapps.com/) | `distrobox assemble create --file ./protonapps/distrobox.ini` |
