@@ -6,6 +6,13 @@ DOWNLOAD_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 JQ_PARSE_RELEASE=".Releases | sort_by(.ReleaseDate) | last"
 JQ_PARSE_PACKAGE=".File[] | select(.Identifier | contains(\".deb\")) | .Url"
 JQ_PARSE_SHA512=".File[] | select(.Identifier | contains(\".deb\")) | .Sha512CheckSum"
+INIT_HOOK_SUCCESS_FILE="/opt/.init-hook-success"
+
+#Check if distrobox init-hook has already run
+if test -f "${INIT_HOOK_SUCCESS_FILE}"; then
+  echo "distrobox init-hook has already successfully run"
+  exit 0
+fi
 
 # Install dependencies
 sudo apt-get update
@@ -40,3 +47,6 @@ else
   echo "SHA512 checksum verification failed. Aborting installation."
   exit 1
 fi
+
+# Set installed flag
+touch "${INIT_HOOK_SUCCESS_FILE}"
