@@ -1,4 +1,4 @@
-# Distrobox
+# Distrobox-Manifests
 
 This repository holds all my custom [Distrobox](https://distrobox.it/) manifest files which I use to get apps
 running on [bluefin-dx](https://projectbluefin.io/) where an official [Flatpak](https://flathub.org/)
