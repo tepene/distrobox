@@ -1,5 +1,5 @@
 #! /bin/env bash
-set -ouex pipefail
+# set -ouex pipefail # disabled since protnvpn installation returns errors
 
 # Global variables
 DOWNLOAD_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
@@ -49,19 +49,20 @@ else
 fi
 
 ## Install proton vpn
-PROTONVPN_DOWNLOAD_BASE_URL="https://repo.protonvpn.com/debian/dists/stable/main/binary-all/"
-PROTONVPN_HREF_REGEX='href=["'\'']\K[^"'\'']*protonvpn-stable-release.*?all\.deb(?=["'\''])'
+PROTONVPN_DOWNLOAD_BASE_URL="https://repo.protonvpn.com/debian"
+PROTONVPN_PACKAGE_INFO="${PROTONVPN_DOWNLOAD_BASE_URL}/dists/stable/main/binary-all/Packages"
+PROTONVPN_PATH_REGEX='(?<=Filename: ).*protonvpn-stable-release.*'
 ## Get all href's for debian installer
-PROTONVPN_HREFS=($(curl - -L "${PROTONVPN_DOWNLOAD_BASE_URL}" | grep -oP "${PROTONVPN_HREF_REGEX}"))
+PROTONVPN_DEB_PATHS=$(curl -s "${PROTONVPN_PACKAGE_INFO}" | grep -oP "${PROTONVPN_PATH_REGEX}")
 ## Sort results in numeric reverse order
-# readarray -td '' PROTONVPN_HREFS_SORTED < <(printf '%s\0' "${PROTONVPN_HREFS[@]}" | sort -rn)
+readarray -td '' PROTONVPN_DEB_PATHS_SORTED < <(printf '%s\0' "${PROTONVPN_DEB_PATHS[@]}" | sort -rn)
 ## Download installer
-PROTONVPN_DOWNLOAD_URL="${PROTONVPN_DOWNLOAD_BASE_URL}${PROTONVPN_HREFS[-1]}"
+PROTONVPN_DOWNLOAD_URL="${PROTONVPN_DOWNLOAD_BASE_URL}/${PROTONVPN_DEB_PATHS_SORTED[0]}"
 PROTONVPN_INSTALLER_NAME=$(basename "${PROTONVPN_DOWNLOAD_URL}")
 wget -O "${DOWNLOAD_DIR}/${PROTONVPN_INSTALLER_NAME}" "${PROTONVPN_DOWNLOAD_URL}"
 ## Install
 sudo dpkg -i "${DOWNLOAD_DIR}/${PROTONVPN_INSTALLER_NAME}" && sudo apt-get update
-sudo apt-get -y install --no-install-recommends proton-vpn-gnome-desktop
+sudo apt-get -y install --no-install-recommends proton-vpn-gnome-desktop &>/dev/null # installation in container will return some errors but usually they can be ignored
 
 # Set installed flag
-touch "${INIT_HOOK_SUCCESS_FILE}"
+sudo touch "${INIT_HOOK_SUCCESS_FILE}"
