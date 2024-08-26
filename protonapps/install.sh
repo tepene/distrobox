@@ -49,15 +49,14 @@ else
 fi
 
 ## Install proton vpn
-PROTONVPN_DOWNLOAD_BASE_URL="https://repo.protonvpn.com/debian/dists/stable/main/binary-all"
+PROTONVPN_DOWNLOAD_BASE_URL="https://repo.protonvpn.com/debian/dists/stable/main/binary-all/"
 PROTONVPN_HREF_REGEX='href=["'\'']\K[^"'\'']*protonvpn-stable-release.*?all\.deb(?=["'\''])'
 ## Get all href's for debian installer
-PROTONVPN_HREFS=($(curl -sk -L "${PROTONVPN_DOWNLOAD_BASE_URL}" | grep -oP "${PROTONVPN_HREF_REGEX}"))
-echo $PROTONVPN_HREFS
+PROTONVPN_HREFS=($(curl - -L "${PROTONVPN_DOWNLOAD_BASE_URL}" | grep -oP "${PROTONVPN_HREF_REGEX}"))
 ## Sort results in numeric reverse order
-readarray -td '' PROTONVPN_HREFS_SORTED < <(printf '%s\0' "${PROTONVPN_HREFS[@]}" | sort -r)
+# readarray -td '' PROTONVPN_HREFS_SORTED < <(printf '%s\0' "${PROTONVPN_HREFS[@]}" | sort -rn)
 ## Download installer
-PROTONVPN_DOWNLOAD_URL="${PROTONVPN_DOWNLOAD_BASE_URL}/${PROTONVPN_HREFS_SORTED[0]}"
+PROTONVPN_DOWNLOAD_URL="${PROTONVPN_DOWNLOAD_BASE_URL}${PROTONVPN_HREFS[-1]}"
 PROTONVPN_INSTALLER_NAME=$(basename "${PROTONVPN_DOWNLOAD_URL}")
 wget -O "${DOWNLOAD_DIR}/${PROTONVPN_INSTALLER_NAME}" "${PROTONVPN_DOWNLOAD_URL}"
 ## Install
